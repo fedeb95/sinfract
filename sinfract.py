@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+from scipy.io.wavfile import write
 
 def sinfract(x, a, f, n, k=4):
     if n == 0:
@@ -15,7 +16,8 @@ def sinfractl(x, a, f, n, k=4):
         a = a/k
     return y
             
-x = np.linspace(0, 1000, 100000)
+seconds = 5
+x = np.linspace(0, seconds, 44100*seconds)
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
@@ -26,13 +28,20 @@ ax.spines['top'].set_color('none')
 ax.xaxis.set_ticks_position('bottom')
 ax.yaxis.set_ticks_position('left')
 
-period = float(sys.argv[1])
+freq = float(sys.argv[1])
 n = float(sys.argv[2])
 k = float(sys.argv[3])
+amp = float(sys.argv[4])
+
+data = sinfractl(x, amp, freq, n, k)
 
 # plot the function
-plt.plot(x,sinfractl(x, 1, 1/period, n, k), 'b-')
+plt.plot(x, data, 'b-')
 
 # show the plot
 plt.show()
 
+print('writing sound file...')
+
+scaled = np.int16(data/np.max(np.abs(data)) * 32767)
+write('output.wav', 44100, scaled)
