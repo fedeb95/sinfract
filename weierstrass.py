@@ -2,26 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from scipy.io.wavfile import write
-from scipy.special import iv
 
 def sinfract(x, a, f, n, k=4):
     if n == 0:
         return 0
     return a*np.sin(2*np.pi*f*x) + sinfract(x, a/k, f*k, n-1, k=k)
 
-beta = 100
-fm = 440
-
 def sinfractl(x, a, f, n, k=4):
     y = np.zeros(len(x))
     for i in range(0, int(n)):
-        #y += iv(i, k)*np.cos(2*np.pi*f*x) 
-        y += a*iv(i, beta)*np.cos(2*np.pi*(f+i*fm)*x) 
+        y += a*np.sin(2*np.pi*f*x)
         f = f*k
         a = a/k
     return y
             
-seconds = int(sys.argv[5])
+seconds = 1
 x = np.linspace(0, seconds, 44100*seconds)
 
 fig = plt.figure()
