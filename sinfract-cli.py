@@ -57,13 +57,13 @@ def main():
                         dest="depth")
     parser.add_argument('-s',
                         '--scale',
-                        help="scaling factor at each step",
+                        help="scaling factor at each step, use with sinfract method",
                         type=float,
                         default=2,
                         dest="scale")
     parser.add_argument('-p',
                         '--precision',
-                        help="precision of the curve",
+                        help="precision of the x axis",
                         type=int,
                         default=1000,
                         dest="precision")
@@ -88,14 +88,14 @@ def main():
                         dest="b_param")
     parser.add_argument('-a',
                         '--a',
-                        help="a parameter, use with weierstrass method",
+                        help="a parameter, use with weierstrass or sinfract method",
                         type=float,
                         default=0.2,
                         dest="a_param")
 
     parser.add_argument('-f',
                         '--frequency',
-                        help="strarting frequency of function, use with bessel method",
+                        help="strarting frequency of function, use with bessel or sinfract method",
                         type=float,
                         default=1,
                         dest="frequency")
@@ -167,7 +167,7 @@ def main():
             print("WARNING: precision not a multiple of 44100")
         print("saving function as audio...")
         scaled = np.int16(data/np.max(np.abs(data)) * 32767)
-        write('{}-f{}-s{}-d{}.wav', 44100, scaled)
+        write('{}-f{}-s{}-d{}.wav'.format(args.method, args.frequency, args.scale, args.depth), 44100, scaled)
 
     # show the plot
     plt.show()
