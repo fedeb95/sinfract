@@ -27,12 +27,12 @@ def calc_data(x, args):
                   args.frequency, 
                   args.mod_frequency,
                   args.beta)
-    elif args.method == 'bessel2':
-        return sinfract.bessel2(x, 
-                  args.depth, 
-                  args.frequency, 
-                  args.mod_frequency,
-                  args.beta)
+    elif args.method == 'sinfract':
+        return sinfract.sinfract(x,
+                args.depth,
+                args.a_param,
+                args.frequency,
+                args.scale)
     else:
         return sinfract.weierstrass(x, 
                                     args.depth,
@@ -50,7 +50,10 @@ def main():
                         type=str,
                         dest="method")
     parser.add_argument('-d',
-                        '--depth', help="number of recurive steps", type=float, default=10,
+                        '--depth', 
+                        help="number of recurive steps", 
+                        type=int, 
+                        default=100,
                         dest="depth")
     parser.add_argument('-s',
                         '--scale',
@@ -62,7 +65,7 @@ def main():
                         '--precision',
                         help="precision of the curve",
                         type=int,
-                        default=100,
+                        default=1000,
                         dest="precision")
     parser.add_argument('-start',
                         '--start',
@@ -100,7 +103,7 @@ def main():
                         '--mod-freq',
                         help="frequency of modulator, use with bessel method",
                         type=float,
-                        default=440,
+                        default=1,
                         dest="mod_frequency")
     parser.add_argument('-beta',
                         '--beta',
@@ -136,6 +139,8 @@ def main():
     data = calc_data(x, args)
     line, = ax.plot(x, data)
 
+    print(args.depth)
+
     if args.anim:
         anim_running = True
         anim = animation.FuncAnimation(
@@ -144,9 +149,9 @@ def main():
             nonlocal anim_running
             if anim_running:
                 anim.event_source.stop()
+                anim.frame_seq = anim.new_frame_seq()
                 anim_running = False
             else:
-                anim.new_frame_seq()
                 anim.event_source.start()
                 anim_running = True
         fig.canvas.mpl_connect('button_press_event', onClick)
