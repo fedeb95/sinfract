@@ -1,9 +1,45 @@
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 from scipy.io.wavfile import write
 
 import sinfract 
+
+SPEED = 1.1
+
+def animate(frame, args, ax):
+    if frame == 0:
+        frame = 1
+    start = args.xstart / (SPEED**frame)
+    end = args.xend / (SPEED**frame)
+    x = np.linspace(start, end, args.precision)
+    data = calc_data(x, args)   
+    #line.set_ydata(data)
+    ax.clear()
+    return ax.plot(x, data)
+
+
+def calc_data(x, args):
+    if args.method == 'bessel':
+        return sinfract.bessel(x, 
+                  args.depth, 
+                  args.frequency, 
+                  args.mod_frequency,
+                  args.beta)
+    elif args.method == 'bessel2':
+        return sinfract.bessel2(x, 
+                  args.depth, 
+                  args.frequency, 
+                  args.mod_frequency,
+                  args.beta)
+    else:
+        return sinfract.weierstrass(x, 
+                                    args.depth,
+                                    args.a_param,
+                                    args.b_param,
+                                    args.frequency)
+
 
 def main():
     parser = argparse.ArgumentParser(description="sinfract-cli - CLI utility for weierstrass functions & friends")
@@ -14,10 +50,7 @@ def main():
                         type=str,
                         dest="method")
     parser.add_argument('-d',
-                        '--depth',
-                        help="number of recurive steps",
-                        type=float,
-                        default=10,
+                        '--depth', help="number of recurive steps", type=float, default=10,
                         dest="depth")
     parser.add_argument('-s',
                         '--scale',
@@ -81,13 +114,18 @@ def main():
                         help="save wave audio file",
                         action="store_true",
                         dest="audio")
+    parser.add_argument('-anim',
+                        '--animate',
+                        help="animate plot",
+                        action="store_true",
+                        dest="anim")
+
 
     args = parser.parse_args()
 
     x = np.linspace(args.xstart, args.xend, args.precision)
 
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    fig, ax = plt.subplots()
     ax.spines['left'].set_position('center')
     ax.spines['bottom'].set_position('center')
     ax.spines['right'].set_color('none')
@@ -95,21 +133,29 @@ def main():
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
 
-    if args.method == 'bessel':
-        data = sinfract.bessel(x, 
-                  args.depth, 
-                  args.frequency, 
-                  args.mod_frequency,
-                  args.beta)
-    else:
-        data = sinfract.weierstrass(x, 
-                                    args.depth,
-                                    args.a_param,
-                                    args.b_param,
-                                    args.frequency)
+    data = calc_data(x, args)
+    line, = ax.plot(x, data)
 
-    # plot the function
-    plt.plot(x, data, 'b-')
+    if args.anim:
+        anim_running = True
+        anim = animation.FuncAnimation(
+            fig, animate, fargs=(args,ax), interval=50)
+        def onClick(event):
+            nonlocal anim_running
+            if anim_running:
+                anim.event_source.stop()
+                anim_running = False
+            else:
+                anim.new_frame_seq()
+                anim.event_source.start()
+                anim_running = True
+        fig.canvas.mpl_connect('button_press_event', onClick)
+    else:
+        plt.plot(x, data, 'b-')
+    
+    mng = plt.get_current_fig_manager()
+    mng.resize(*mng.window.maxsize())
+    plt.show()
 
     if args.audio:
         if args.precision % 44100 != 0:
