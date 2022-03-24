@@ -32,13 +32,13 @@ Try other functions with the `--method` parameter, like `bessel` or `sinfract`. 
 ## Features
 
 - plot a fractal function
-- visualize and animation of a fractal function with `-anim` parameter
-- listen to the sinusoids with `-audio` parameter (see below for tips)
+- visualize an animation of a fractal function with the `-anim` parameter
+- listen to the sinusoids with the `-audio` parameter (see below for tips)
 - as a library, import `sinfract.py` to do what you want!
 
 ## Audio
 
-Since the program needs to generate enough frames for the audio to play, and frequency shoudl be meaningful, a nice place to start is:
+Since the program needs to generate enough frames for the audio to play, and frequency should be meaningful, a nice place to start is:
 ```
 python sinfract-cli.py -m bessel -audio -f 256 -fm 1 -beta 1 -p 44100
 ```
