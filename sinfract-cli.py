@@ -42,22 +42,29 @@ def calc_data(x, args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="sinfract-cli - CLI utility for weierstrass functions & friends")
+    parser = argparse.ArgumentParser(description="sinfract-cli - CLI utility for visualizing and listening to weierstrass functions & friends", formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-m',
                         '--method',
-                        help="function to plot",
-                        default="weierstrass",
                         type=str,
-                        dest="method")
+                        default="weierstrass",
+                        dest="method",
+                        help='''\
+Function to plot. Values:
+    'weierstrass': classical Weierstrass function
+    'bessel': modified Weierstrass function,
+     so that a parameter equals a Bessel function of the first kind with parameter beta, 
+     and b parameter is (frequency+n*fm)^n
+    'sinfract': fractal sinusoid with amplitude a, frequency f and scale s
+                            ''')
     parser.add_argument('-d',
                         '--depth', 
-                        help="number of recurive steps", 
+                        help="number of summations to compute", 
                         type=int, 
                         default=100,
                         dest="depth")
     parser.add_argument('-s',
                         '--scale',
-                        help="scaling factor at each step, use with sinfract method",
+                        help="scaling factor, use with sinfract method",
                         type=float,
                         default=2,
                         dest="scale")
