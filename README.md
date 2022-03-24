@@ -2,7 +2,7 @@
 
 ![plot picture](/images/sinfract.png)
 
-Python program to visualize, listen and compute various fractal sinusoids.
+Python program to visualize, listen to and compute various fractal sinusoids.
 
 `sinfract.py` contains methods to compute three types of functions:
 - `weierstrass`: the famous [Weierstrass function](https://en.wikipedia.org/wiki/Weierstrass_function)
