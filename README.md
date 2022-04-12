@@ -24,7 +24,7 @@ pip install -r requirements.txt
 ```
 - run with
 ```
-python sinfract-cli -anim
+python sinfract-cli.py -anim
 ```
 This will show an animation of the Weierstrass function.
 Try other functions with the `--method` parameter, like `bessel` or `sinfract`. See below for more commands.
